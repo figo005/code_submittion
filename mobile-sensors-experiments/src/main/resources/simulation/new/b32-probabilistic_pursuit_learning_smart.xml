@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-autowire="byType">
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="simulation" class="uk.ac.soton.ecs.mobilesensors.Simulation">
+		<property name="simpleName" value="4rooms" />
+		<property name="description" value="4rooms" />
+		<property name="terminationPolicy">
+			<bean class="uk.ac.soton.ecs.mobilesensors.EvaderCapturedTerminationPolicy" >
+<!-- 				<property name="maxRounds" value="500" />-->
+			</bean>
+		</property>
+		<property name="initialPlacement" ref="randomLocation" />
+
+		<property name="messageInterchange">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.communication.RangeRestrictedMessageInterchange">
+				<property name="communicationProbability" value="1.0" />
+				<property name="communicationRange" value="300000000.0" />
+				<property name="simulation" ref="simulation" />
+			</bean>
+		</property>
+
+		<property name="environment" ref="environment" />
+	</bean>
+
+	<bean id="environment" class="uk.ac.soton.ecs.mobilesensors.Environment">
+
+	</bean>
+
+	<bean id="grid" class="uk.ac.soton.ecs.mobilesensors.layout.GraphGridAdaptor">
+		<property name="graph" ref="accessibilityGraph" />
+	</bean>
+
+	<bean id="accessibilityGraph" factory-bean="graphLoader"
+		factory-method="create" />
+
+	<bean id="graphLoader"
+		class="uk.ac.soton.ecs.mobilesensors.configuration.AccessibilityGraphIO">
+		<property name="resource" value="classpath:graphs/building32.txt" />
+	</bean>
+
+	<bean id="informativenessFunction"
+		class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.LearningPursuitEvaderModel">
+		<property name="captureRange" value="90" />
+
+		<property name="groundTruth">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.ProbabilisticPursuitEvaderModel">
+				<property name="captureRange" value="40" />
+				<property name="movementModel">
+					<bean class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.SmartEvader" />
+				</property>
+			</bean>
+		</property>
+
+		<property name="otherHypotheses">
+			<list>
+				<bean
+					class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.ProbabilisticPursuitEvaderModel">
+					<property name="captureRange" value="40" />
+					<property name="movementModel">
+						<bean
+							class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.StationaryEvader" />
+					</property>
+				</bean>
+
+				<bean
+					class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.ProbabilisticPursuitEvaderModel">
+					<property name="captureRange" value="40" />
+					<property name="movementModel">
+						<bean
+							class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.SimpleRandomMovementModel" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sensingModel"
+		class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.SimpleCellSensingModel">
+		<property name="falseNegativeProbability" value="0.000005" />
+		<property name="falsePositiveProbability" value="0.000005" />
+		<property name="sensingRange" value="120" />
+	</bean>
+
+	<bean id="randomLocation"
+		class="uk.ac.soton.ecs.mobilesensors.initialplacement.RandomInitialPlacement">
+		<property name="randomSeed" value="$randomSeed" />
+	</bean>
+</beans>

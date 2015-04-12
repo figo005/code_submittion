@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
+
+	<bean id="sensor"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.Sensor">
+		<property name="predictor" ref="predictor" />
+		<property name="coordinationMechanism">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.GreedyCoordinationMechanism">
+				<property name="temperature" value="0.04" />
+				<property name="utilityFunction" ref="learningentropy" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="entropy"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.Entropy">
+		<property name="predictor" ref="fixedWindow" />
+	</bean>
+	
+	<bean id="learningentropy"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.LearningEntropy">
+		<property name="predictor" ref="fixedWindow" />
+	</bean>
+
+	<bean id="fixedWindow"
+		class="uk.ac.soton.ecs.gp4j.wrapper.FixedWindowPredictor">
+		<property name="windowSize" value="40" />
+		<property name="regression" ref="gaussianProcessRegression" />
+	</bean>
+	
+	<bean id="predictor"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.GaussianProcessPredictor">
+		<property name="regression" ref="fixedWindow" />
+	</bean>
+
+	<bean id="gaussianProcessRegression"
+		class="uk.ac.soton.ecs.gp4j.bmc.GaussianProcessRegressionBMC">
+		<property name="covarianceFunction">
+			<bean
+				class="uk.ac.soton.ecs.gp4j.gp.covariancefunctions.CovarianceFunctionFactory"
+				factory-method="getNoisy2DTimeSquaredExponentialCovarianceFunction">
+			</bean>
+		</property>
+		<property name="priors">
+			<list>
+				<bean class="uk.ac.soton.ecs.gp4j.bmc.BasicPrior">
+					<property name="sampleCount" value="11" />
+					<property name="mean" value="8" />
+					<property name="standardDeviation" value="0.4" />
+				</bean>
+				<bean class="uk.ac.soton.ecs.gp4j.bmc.BasicPrior">
+					<property name="sampleCount" value="11" />
+					<property name="mean" value="5800" />
+					<property name="standardDeviation" value="0.4" />
+				</bean>
+				<bean class="uk.ac.soton.ecs.gp4j.bmc.BasicPrior">
+					<property name="sampleCount" value="1" />
+					<property name="mean" value="2.9" />
+					<property name="standardDeviation" value="0.2" />
+				</bean>
+				<bean class="uk.ac.soton.ecs.gp4j.bmc.BasicPrior">
+					<property name="sampleCount" value="1" />
+					<property name="mean" value="0.2" />
+					<property name="standardDeviation" value="0.2" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

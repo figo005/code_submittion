@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byType">
+
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="sensor"
+		class="uk.ac.soton.ecs.mobilesensors.centralised.CentrallyControlledSensor">
+		<property name="predictor" ref="predictor" />
+		<property name="controllerFactory" ref="controllerFactory" />
+	</bean>
+
+	<bean id="controllerFactory"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.maxsum.centralised.CentralisedMaxSumControllerFactory">
+		<property name="negotiationInterval" value="4" />
+		<property name="maxSumSettings" ref="maxSumSettings" />
+		<property name="maxSumNodeFactory" ref="maxSumNodeFactory" />
+	</bean>
+	
+	<bean id="maxSumNodeFactory" class="uk.ac.soton.ecs.mobilesensors.sensor.maxsum.factory.MultiStepMaxSumNodeFactory" >
+		<property name="pathLength" value="8" />	
+	</bean>
+	
+	<bean id="maxSumSettings" class="maxSumController.MaxSumSettings">
+		<property name="maxSumIterations" value="20" />
+		<property name="useGlobalPruning" value="true" />
+	</bean>
+
+	<bean id="fixedWindow" class="uk.ac.soton.ecs.gp4j.wrapper.FixedWindowRegression">
+		<property name="windowSize" value="50" />
+		<property name="regression" ref="gaussianProcessRegression" />
+	</bean>
+
+	<bean id="gaussianProcessRegression"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.EnvironmentGaussianProcess">
+	</bean>
+
+	<bean id="predictor"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.SharedGaussianProcessPredictor">
+		<property name="regression" ref="fixedWindow" />
+	</bean>
+
+</beans>

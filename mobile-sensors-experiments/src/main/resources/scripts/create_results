@@ -1,0 +1,15 @@
+#!/bin/bash
+
+result_dir=results
+
+# define a searchstring
+search_string_template="communicationProbability.*value=\"v_val"
+substitutions=`seq 0 0.1 1.0`
+# directory where all the output files are
+source_dir="runs"
+# directory where the aggregated results go
+results_dir="results"
+
+aggregate_results $search_string_template $substitutions $source_dir $results_dir average-RMS.txt RMS-averages.txt 
+aggregate_results $search_string_template $substitutions $source_dir $results_dir sensor_pairs_in_range.txt sensor_pairs_in_range_average.txt
+aggregate_results $search_string_template $substitutions $source_dir $results_dir message_count.txt

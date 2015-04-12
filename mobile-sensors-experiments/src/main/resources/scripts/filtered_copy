@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# find required file from directory in which a file with a certain string is present, and copy it to dest_dir
+required_file=$1
+search_string=$2
+source_dir=$3
+dest_dir=$4
+
+if [ ! "$required_file" ]; then
+	echo "required_file not specfied"
+	exit 1
+fi
+if [ ! "$search_string" ]; then
+	echo "search_string not specified"
+	exit 1
+fi
+if [ ! "$source_dir" ]; then
+	echo "source_dir not specified"
+	exit 1
+fi
+if [ ! "$dest_dir" ]; then
+	echo "dest_dir not specified"
+	exit 1
+fi
+
+echo "copying file \"$required_file\" from subdirectories of \"$source_dir\" in which \"$search_string\" is present to \"$dest_dir\""
+
+mkdir -p $dest_dir
+
+for file in $(grep -R $search_string $source_dir -l)
+do
+	# copy the file that contains the search string to the output directory
+	cp $file $dest_dir
+	# get the directory in which the configuration file is located
+	dir=`dirname $file`
+	echo "copying $dir/$required_file to $dest_dir/$required_file$i"
+	cp $dir/$required_file $dest_dir/$required_file$i
+	let "i += 1"
+done

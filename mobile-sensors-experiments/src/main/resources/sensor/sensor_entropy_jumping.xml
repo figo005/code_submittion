@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="sensor" class="uk.ac.soton.ecs.mobilesensors.sensor.Sensor">
+		<property name="predictor" ref="predictor" />
+		<property name="coordinationMechanism">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.JumpingGreedyCoordinationMechanism">
+				<property name="temperature" value="0.00" />
+				<property name="utilityFunction" ref="entropy" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="entropy"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.Entropy">
+		<property name="predictor" ref="predictor" />
+	</bean>
+
+
+	<bean id="gaussianProcessRegression"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.EnvironmentGaussianProcess">
+		<property name="sensor" ref="sensor" />
+	</bean>
+
+	<bean id="fixedWindow" class="uk.ac.soton.ecs.gp4j.wrapper.FixedWindowRegression">
+		<property name="windowSize" value="50" />
+		<property name="regression" ref="gaussianProcessRegression" />
+	</bean>
+
+	<bean id="predictor"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.SharedGaussianProcessPredictor">
+		<property name="regression" ref="fixedWindow" />
+	</bean>
+
+</beans>

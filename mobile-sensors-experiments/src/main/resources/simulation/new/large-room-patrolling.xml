@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans 
+	default-autowire="byType">
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="simulation" class="uk.ac.soton.ecs.mobilesensors.Simulation">
+		<property name="simpleName" value="4rooms" />
+		<property name="description" value="4rooms" />
+		<property name="terminationPolicy">
+			<bean class="uk.ac.soton.ecs.mobilesensors.NRoundsTerminationPolicy">
+				<property name="endRound" value="200" />
+			</bean>
+		</property>
+		<property name="initialPlacement" ref="randomLocation" />
+
+		<property name="messageInterchange">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.communication.RangeRestrictedMessageInterchange">
+				<property name="communicationProbability" value="1.0" />
+				<property name="communicationRange" value="300000000.0" />
+				<property name="simulation" ref="simulation" />
+			</bean>
+		</property>
+
+		<property name="environment" ref="environment" />
+	</bean>
+
+	<bean id="randomLocation"
+		class="uk.ac.soton.ecs.mobilesensors.initialplacement.RandomInitialPlacement">
+		<property name="randomSeed" value="16" />
+	</bean>
+
+	<bean id="environment" class="uk.ac.soton.ecs.mobilesensors.Environment">
+
+	</bean>
+
+	<bean id="grid" class="uk.ac.soton.ecs.mobilesensors.layout.GraphGridAdaptor">
+		<property name="graph" ref="accessibilityGraph" />
+	</bean>
+
+	<bean id="accessibilityGraph" factory-bean="graphLoader"
+		factory-method="create" />
+
+	<bean id="graphLoader"
+		class="uk.ac.soton.ecs.mobilesensors.configuration.AccessibilityGraphIO">
+		<property name="resource" value="classpath:graphs/large-room.txt" />
+	</bean>
+
+	<bean id="informativenessFunction"
+		class="uk.ac.soton.ecs.mobilesensors.worldmodel.patrolling.PatrollingInformativenessFunction">
+		<property name="attackProbability" value="0.0003" />
+		<property name="attackGenerator" ref="randomAttacker" />
+		<property name="attackDuration" value="20" />
+		<property name="captureRange" value="5" />
+		<property name="lossFunction">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.worldmodel.patrolling.ConservativeLossFunction" />
+		</property>
+	</bean>
+
+	<bean id="sensingModel"
+		class="uk.ac.soton.ecs.mobilesensors.worldmodel.probpe.SimpleCellSensingModel">
+		<property name="falseNegativeProbability" value="0.0001" />
+		<property name="falsePositiveProbability" value="0.0001" />
+		<property name="sensingRange" value="10" />
+	</bean>
+
+	<bean id="randomAttacker"
+		class="uk.ac.soton.ecs.mobilesensors.worldmodel.patrolling.RandomAttackerGenerator">
+		<property name="attackProbability" value="0.0003" />
+	</bean>
+
+</beans>

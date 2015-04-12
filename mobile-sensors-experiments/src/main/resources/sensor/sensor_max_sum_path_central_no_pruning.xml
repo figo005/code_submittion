@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byType">
+
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="sensor" class="uk.ac.soton.ecs.mobilesensors.sensor.Sensor" />
+	
+	<bean id="coordinationMechanism" class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.CentralisedCoordinationMechanism" />
+	
+	<bean id="coordinationFactory" class="uk.ac.soton.ecs.mobilesensors.sensor.maxsum.centralised.CentralisedMaxSumControllerFactory">
+		<property name="negotiationInterval" value="2" />
+	</bean>
+	
+	<bean id="maxSumNodeFactory" class="uk.ac.soton.ecs.mobilesensors.sensor.maxsum.factory.MultiStepMaxSumNodeFactory" >
+		<property name="pathLength" value="4" />
+	</bean>
+	
+	<bean id="maxSumSettings" class="maxSumController.MaxSumSettings">
+		<property name="maxSumIterations" value="20" />
+		<property name="useGlobalPruning" value="false" />
+	</bean>
+
+</beans>

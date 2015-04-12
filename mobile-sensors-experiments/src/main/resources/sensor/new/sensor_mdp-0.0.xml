@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-autowire="byType">
+
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="sensor" class="uk.ac.soton.ecs.mobilesensors.sensor.Sensor">
+		<property name="coordinationMechanism">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.CentralisedCoordinationMechanism">
+				<property name="controllerFactory" ref="controller" />
+			</bean>
+		</property>
+		<property name="discountFactor" value="0.0" />
+	</bean>
+
+	<bean id="controller"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.centralised.MDPCentralisedControllerFactory">
+		<property name="clusterBudget" value="50" />
+		<property name="clusterCount" value="7" />
+		<property name="coordinate" value="false" />
+		<property name="gui" value="false" />
+	</bean>
+
+</beans>

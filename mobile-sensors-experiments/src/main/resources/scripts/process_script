@@ -1,0 +1,2 @@
+./copy_relevant_files
+./create_averages results txt*

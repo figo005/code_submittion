@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=$hours:00:00
+sensor="$sensor_file"
+java_args="-Xms128m -Xmx1024m"
+
+cd $directory
+module load jdk
+
+config_files=($simulation_files)
+
+for config_file in ${config_files[*]}
+do
+  java $java_args -jar ../experiments.jar -output runs/runs -rc 1 -sc $num_sensors -sense $sensor -sim $config_file -z &
+  sleep 2
+done
+
+wait
+

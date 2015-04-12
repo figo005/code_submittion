@@ -1,0 +1,5 @@
+
+SELECT NAME,  AVG(patrollingloss), STD(patrollingloss), MIN(patrollingloss), MAX(patrollingloss), AVG(average_field_value) FROM experiment_set, experiment_result WHERE NAME LIKE '%patrolling%' AND experiment_set.id = experiment_set_id GROUP BY experiment_set_id;
+
+
+SELECT NAME,  AVG(capturetime), MIN(capturetime), MAX(capturetime), STD(capturetime), AVG(average_entropy)  FROM experiment_set, experiment_result WHERE NAME LIKE  '%pursuit%' AND experiment_set.id = experiment_set_id AND capturetime != -1 GROUP BY experiment_set_id;

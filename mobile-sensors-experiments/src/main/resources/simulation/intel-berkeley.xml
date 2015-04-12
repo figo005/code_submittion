@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
+
+	<bean id="simulation"
+		class="uk.ac.soton.ecs.mobilesensors.Simulation">
+		<property name="simpleName" value="berkeley" />
+		<property name="description" value="Intel Berkeley Lab WSN" />
+
+		<property name="initialPlacement">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.SimpleInitialPlacement">
+			</bean>
+		</property>
+		<property name="timer">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.time.SimpleTimer">
+				<!-- one tick takes 5 minutes -->
+				<property name="tickDuration" value="300.0" />
+			</bean>
+		</property>
+		<property name="terminationPolicy">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.TimeTerminationPolicy">
+				<!-- simulation takes one day, which is 3600 * 24 = 86400 seconds -->
+				<property name="endTime" value="86400" />
+			</bean>
+		</property>
+
+		<property name="environment" ref="environment" />
+	</bean>
+
+	<bean id="environment"
+		class="uk.ac.soton.ecs.mobilesensors.Environment">
+		<property name="observationGenerator">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.observation.DatasetObservationGenerator">
+				<property name="lengthScale" value="8.0" />
+				<property name="timeScale" value="5800" />
+				<property name="signalVariance" value="2.9" />
+				<property name="noise" value="0.2" />
+				<property name="covarianceFunction">
+					<bean
+						class="uk.ac.soton.ecs.gp4j.gp.covariancefunctions.CovarianceFunctionFactory"
+						factory-method="getNoisy2DTimeMatern3CovarianceFunction">
+					</bean>
+				</property>
+
+				<property name="phenomenon">
+					<bean
+						class="uk.ac.soton.ecs.mobilesensors.observation.SpatialPhenomenon">
+						<property name="name" value="temperature" />
+					</bean>
+				</property>
+				<property name="filename"
+					value="/mnt/data/berkeley-dataset/datasets/berkeley-temperature-2004-03-01-rescaled.txt" />
+			</bean>
+		</property>
+		<property name="grid">
+			<bean factory-bean="gridLoader" factory-method="create" />
+		</property>
+
+		<property name="accessibilityGraph">
+			<bean factory-bean="graphLoader" factory-method="create" />
+		</property>
+	</bean>
+
+	<bean id="gridLoader"
+		class="uk.ac.soton.ecs.mobilesensors.configuration.GridIO">
+		<property name="resource"
+			value="classpath:grids/berkeleygrid-40-30-2.txt" />
+	</bean>
+
+	<bean id="graphLoader"
+		class="uk.ac.soton.ecs.mobilesensors.configuration.AccessibilityGraphIO">
+		<property name="resource"
+			value="classpath:graphs/intel-berkeley-connected.txt" />
+	</bean>
+</beans>

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# for each in $result_dir, create a file $output_file_name in that directory
+# consisting of the averages of values found in files matching input_file_pattern
+
+result_dir=$1
+input_file_pattern=$2
+output_file_name=$3
+
+if [ ! "$result_dir" ]; then
+	echo "result_dir not specfied"
+	exit 1
+fi
+if [ ! "$input_file_pattern" ]; then
+	echo "input_file_pattern not specified"
+	exit 1
+fi
+if [ ! "$output_file_name" ]; then
+	echo "output_file_name not specified"
+	exit 1
+fi
+
+echo "creating files \"$output_file_name\" in subdirectories of \"$result_dir\" with averages of values found in files matching \"$input_file_pattern\""
+
+for dir in $(ls $result_dir)
+do
+
+	# prefix $dir by $result_dir, otherwise you only get the directory name, not the full relative path	l
+	if [ -d $result_dir/$dir ]; then
+		output_file=$result_dir/$output_file_name$dir
+		echo "creating \"$output_file\" in directory \"$dir\""
+
+		rm -rf $output_file
+		touch $output_file
+	
+		for file in $(ls $result_dir/$dir/$input_file_pattern)
+		do
+			average $file >> $output_file
+		done
+	fi
+done

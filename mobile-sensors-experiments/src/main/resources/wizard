@@ -1,0 +1,6 @@
+if [ -f $EXPERIMENT_JAR_FILE ]
+then
+	java -cp $EXPERIMENT_JAR_FILE uk.ac.soton.ecs.experiments.util.setup.ExperimentSetupWizard
+else
+	echo "Environment variable EXPERIMENT_JAR_FILE not defined"
+fi

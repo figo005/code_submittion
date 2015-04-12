@@ -1,0 +1,26 @@
+
+Checklist analysing results
+===========================
+
+- 'cat' all error log files to check whether there are any errors
+- check whether the number of 'endtime.txt' files is twice as large as the
+number of runs.
+	- to check the number of runs: ls | wc
+	- to check the number of 'endtime.txt' files: find . -name endtime.txt |
+wc
+- for every checked file, create a file 'checked' in the root dir of the
+simulation set
+
+- UPDATE: run checkexp on every directory you wish to check. This will perform
+  the above steps automatically
+
+
+Copy relavant files
+===================
+- Make a list of files you need
+- use the commands:
+
+find . -name simulation.xml -o -name average-RMS.txt -o -name metadata -o -name \
+sensor.xml -o -name message_count.txt -o -name sensor_pairs_in_range.txt > files.txt
+
+tar cvfz results.tgz --files-from=files.txt

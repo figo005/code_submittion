@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for i in $*
+do
+	cd $i/runs
+
+	echo $i
+	success=`find . -name endtime.txt | wc -l`
+	found=`ls | wc -l`
+	let "success=success - found"
+	echo $success of $found 
+	cd ../..	
+done

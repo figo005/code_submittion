@@ -1,0 +1,57 @@
+sensor configuration file preparation
+=====================================
+- if not exists, create sensor file
+- test sensor in Eclipse test run
+
+copy grid and graphs
+====================
+trivial
+
+
+make a link to datasets
+=======================
+Remark: in case of Intel Berkeley datasets, make a soft link to the directory
+that contains all datasets. This has to be done before creating the config,
+because a simulation configuration file has to be created for every dataset file
+
+It might be more preferable to actually copy the datasets, because this makes
+copying the experiment setup to the cluster easier
+
+copy sensor configuration files to directory
+============================================
+trivial
+
+create simulation config files
+==============================
+- create template simulation file
+- create replacements file
+- run wizard 'confgen' to generate simulation files in directory 'simulation'
+
+create iridis scripts
+=====================
+Remark: these scripts are designed to run two simulations on the same node.
+
+- check running time by editing the line "#PBS -l walltime=4:00:00"
+- check for sufficient by editing the line 'memory java_args="-Xms128m
+-Xmx768m"'
+- check sensor configuration filename (variable 'sensor')
+- add a line 'sleep 2' to make sure the simulations are not started at the same
+time. This might cause problems while creating output directories
+- in iridis script, check that the directory is changed to the correct directory
+name (iridis runs scripts from home directory)
+- run wizard 'irgen' to generate
+- make sure you have the submitter.sh script in every directory
+
+copy experiments jarfile to directory
+=====================================
+
+
+iridis
+======
+
+- Copy archive to iridis
+- make sure that there is enough diskspace. If necessary, use the scratch directory and make a symbolic link to that directory from the home directory
+- make sure that the job queue is empty
+- use the submitter.sh script to submit the jobs
+
+

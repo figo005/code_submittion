@@ -1,0 +1,27 @@
+date
+====
+6 december 2007
+
+
+goal
+=======
+evaluate behavior of three sensors with different sensor ranges (length
+scales)
+
+description of runs
+======================
+One run with entropy utility measure, one run with mutual information measure,
+for the following lengthscales: 1.5, 2.0, 2.5, 3.0, and 4.0
+
+sensor type(s)
+=================
+entropy and mutual information. MI has temperature 400, Entropy has 70
+
+number of sensors
+====================
+3
+
+type of environment
+======================
+corridor like, 50 by 10
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans 
+	default-autowire="byType">
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="simulation" class="uk.ac.soton.ecs.mobilesensors.Simulation">
+		<property name="simpleName" value="4rooms" />
+		<property name="description" value="4rooms" />
+		<property name="terminationPolicy">
+			<bean class="uk.ac.soton.ecs.mobilesensors.NRoundsTerminationPolicy">
+				<property name="endRound" value="3000" />
+			</bean>
+		</property>
+		<property name="initialPlacement" ref="randomLocation" />
+
+		<property name="messageInterchange">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.communication.RangeRestrictedMessageInterchange">
+				<property name="communicationProbability" value="1.0" />
+				<property name="communicationRange" value="300000000.0" />
+				<property name="simulation" ref="simulation" />
+			</bean>
+		</property>
+
+		<property name="environment" ref="environment" ></property>
+	</bean>
+
+	<bean id="randomLocation"
+		class="uk.ac.soton.ecs.mobilesensors.initialplacement.RandomInitialPlacement">
+		<property name="randomSeed" value="-1646877729" />
+	</bean>
+	
+
+	<bean id="environment" class="uk.ac.soton.ecs.mobilesensors.Environment">
+
+	</bean>
+
+	<bean id="grid" class="uk.ac.soton.ecs.mobilesensors.layout.GraphGridAdaptor">
+		<property name="graph" ref="accessibilityGraph" />
+	</bean>
+
+	<bean id="accessibilityGraph" factory-bean="graphLoader"
+		factory-method="create" />
+
+	<bean id="graphLoader"
+		class="uk.ac.soton.ecs.mobilesensors.configuration.AccessibilityGraphIO">
+		<property name="resource" value="classpath:graphs/building32 - POMDP.txt" />
+	</bean>
+
+	<bean id="informativenessFunction"
+		class="uk.ac.soton.ecs.mobilesensors.worldmodel.disk.RiskAndInformationDiskFunction">
+		<property name="radius" value="0.5" ></property>
+		<property name="uncertaintyIncrement" value="0.1" />
+	</bean>
+
+</beans>

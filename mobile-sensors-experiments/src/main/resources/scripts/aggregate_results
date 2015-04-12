@@ -1,0 +1,21 @@
+#!/bin/bash
+
+search_string_template=$1
+substitutions=$2
+source_dir=$3
+results_dir=$4
+desired_file=$5
+output_file=$6
+
+echo $output_file
+
+for substitute in $substitutions 
+do
+	search_string=${search_string_template/v_val/$substitute}
+	filtered_copy $desired_file $search_string $source_dir $results_dir/$substitute
+done
+
+# if the output_file argument is specified, generate average files
+if [ $output_file ]; then
+	create_averages $results_dir "$desired_file*" $output_file
+fi

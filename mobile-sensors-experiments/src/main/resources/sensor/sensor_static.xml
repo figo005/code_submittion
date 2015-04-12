@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
+
+	<bean id="sensor"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.Sensor">
+		<property name="predictor" ref="predictor" />
+		<property name="coordinationMechanism">
+			<bean
+				class="uk.ac.soton.ecs.mobilesensors.sensor.StaticAllocationCoordinationMechanism">
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="gaussianProcessRegression"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.EnvironmentGaussianProcess">
+		<property name="sensor" ref="sensor" />
+	</bean>
+
+	<bean id="predictor"
+		class="uk.ac.soton.ecs.mobilesensors.sensor.coordination.SharedGaussianProcessPredictor">
+		<property name="regression" ref="gaussianProcessRegression" />
+	</bean>
+
+</beans>

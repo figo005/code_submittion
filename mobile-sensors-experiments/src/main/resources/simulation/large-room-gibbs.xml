@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byType">
+
+	<bean
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean id="simulation" class="uk.ac.soton.ecs.mobilesensors.Simulation">
+		<property name="simpleName" value="4rooms" />
+		<property name="description" value="4rooms" />
+
+		<property name="initialPlacement">
+			<bean class="uk.ac.soton.ecs.mobilesensors.SimpleInitialPlacement">
+				<property name="locationX" value="5.0" />
+				<property name="locationY" value="0.0" />
+			</bean>
+		</property>
+
+		<property name="terminationPolicy">
+			<bean class="uk.ac.soton.ecs.mobilesensors.NRoundsTerminationPolicy">
+				<property name="endRound" value="400" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="messageInterchange"
+		class="uk.ac.soton.ecs.mobilesensors.communication.RangeRestrictedMessageInterchange">
+		<property name="communicationProbability" value="1.0" />
+		<property name="communicationRange" value="20.0" />
+	</bean>
+
+	<bean id="environment" class="uk.ac.soton.ecs.mobilesensors.Environment">
+		<property name="accessibilityGraph">
+			<bean factory-bean="graphLoader" factory-method="create" />
+		</property>
+	</bean>
+
+	<bean id="observationGenerator"
+		class="uk.ac.soton.ecs.mobilesensors.observation.HotSpotGaussianProcessObservationGenerator">
+		<property name="seed" value="0" />
+		<property name="timeScale" value="30.0" />
+		<property name="signalVariance" value="1.0" />
+		<property name="hotspotXCoordinate" value="50.0" />
+		<property name="hotspotYCoordinate" value="50.0" />
+		<property name="noise" value="0.01" />
+		<property name="memoryFactor" value="0" />
+		<property name="phenomenon">
+			<bean class="uk.ac.soton.ecs.mobilesensors.observation.SpatialPhenomenon">
+				<property name="name" value="temperature" />
+			</bean>
+		</property>
+	</bean>
+
+
+	<bean id="grid" factory-bean="gridLoader" factory-method="create" />
+
+	<bean id="gridLoader" class="uk.ac.soton.ecs.mobilesensors.configuration.GridIO">
+		<property name="resource" value="classpath:grids/large-room.txt" />
+	</bean>
+
+	<bean id="graphLoader"
+		class="uk.ac.soton.ecs.mobilesensors.configuration.AccessibilityGraphIO">
+		<property name="resource" value="classpath:graphs/large-room.txt" />
+	</bean>
+
+	<bean id="timer" class="uk.ac.soton.ecs.mobilesensors.time.SimpleTimer">
+		<property name="tickDuration" value="1.0" />
+	</bean>
+
+
+</beans>
